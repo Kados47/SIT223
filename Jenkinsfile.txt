@@ -1,90 +1,61 @@
 pipeline {
     agent any
 
-    environment {
-        // Environment variables can be defined here if needed.
-        STAGING_SERVER = 'staging-server.example.com'
-        PRODUCTION_SERVER = 'production-server.example.com'
-        RECIPIENT_EMAIL = 'kadostrayford@gmail.com'
-    }
-
     stages {
         stage('Build') {
             steps {
-                echo 'Building the code using Maven...'
-                // Maven is a build automation tool commonly used for Java projects.
-                // Example: sh 'mvn clean package'
+                echo 'Building...'
             }
         }
-
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit and integration tests using JUnit...'
-                // JUnit is a popular testing framework for Java.
-                // Example: sh 'mvn test'
+                echo 'Running Unit and Integration Tests...'
             }
         }
-
         stage('Code Analysis') {
             steps {
-                echo 'Analyzing code quality using SonarQube...'
-                // SonarQube is a widely used tool for code quality analysis.
-                // Example: sh 'mvn sonar:sonar'
+                echo 'Performing Code Analysis...'
             }
         }
-
         stage('Security Scan') {
             steps {
-                echo 'Performing security scan using OWASP ZAP...'
-                // OWASP ZAP is a tool used for security vulnerability scanning.
-                // Example: sh 'zap.sh -daemon -quickurl http://localhost'
-            }
-            post {
-                always {
-                    emailext subject: "Security Scan Stage: ${currentBuild.currentResult}",
-                              body: "The Security Scan stage has ${currentBuild.currentResult}. Check attached logs.",
-                              to: "${env.RECIPIENT_EMAIL}",
-                              attachLog: true
-                }
+                echo 'Performing Security Scan...'
             }
         }
-
         stage('Deploy to Staging') {
             steps {
-                echo "Deploying to staging server (${env.STAGING_SERVER})..."
-                // This stage deploys the application to a staging server.
-                // Example: sh 'scp target/myapp.war user@staging-server:/path/to/deploy'
+                echo 'Deploying to Staging...'
             }
         }
-
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running integration tests on staging environment...'
-                // Integration tests are run to ensure the application works as expected.
-                // Example: sh 'mvn verify'
+                echo 'Running Integration Tests on Staging...'
             }
         }
-
         stage('Deploy to Production') {
             steps {
-                echo "Deploying to production server (${env.PRODUCTION_SERVER})..."
-                // This stage deploys the application to a production server.
-                // Example: sh 'scp target/myapp.war user@production-server:/path/to/deploy'
+                echo 'Deploying to Production...'
             }
         }
     }
 
     post {
-        success {
-            emailext subject: "Pipeline Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                      body: "The pipeline has successfully completed.",
-                      to: "${env.RECIPIENT_EMAIL}"
+        always {
+            echo 'Pipeline finished.'
         }
         failure {
-            emailext subject: "Pipeline Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                      body: "The pipeline has failed. Check the logs for details.",
-                      to: "${env.RECIPIENT_EMAIL}",
-                      attachLog: true
+            script {
+                // Send email with the log as an attachment
+                def log = currentBuild.rawBuild.getLog(100).join('\n')
+                mail to: 'kadostrayford@gmail.com',
+                     subject: "Pipeline Failed: ${currentBuild.fullDisplayName}",
+                     body: "Pipeline failed. Check Jenkins for more details.\n\nLog:\n${log}"
+            }
+        }
+        success {
+            mail to: 'kadostrayford@gmail.com',
+                 subject: "Pipeline Succeeded: ${currentBuild.fullDisplayName}",
+                 body: "Pipeline succeeded. All stages completed successfully."
         }
     }
 }
