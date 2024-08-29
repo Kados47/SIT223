@@ -5,50 +5,50 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the application...'
-                // Tool: Maven
-                // Command: mvn clean package
+                // Assume a tool like Maven is pre-configured in Jenkins.
+                sh 'mvn clean package'
             }
         }
         stage('Unit and Integration Tests') {
             steps {
                 echo 'Running Unit and Integration Tests...'
-                // Tool: JUnit
-                // Command: mvn test
+                // Again, assuming JUnit is integrated with Maven
+                sh 'mvn test'
             }
         }
         stage('Code Analysis') {
             steps {
                 echo 'Performing Code Analysis...'
-                // Tool: SonarQube
-                // Command: mvn sonar:sonar
+                // Assuming SonarQube is set up in Jenkins
+                sh 'mvn sonar:sonar'
             }
         }
         stage('Security Scan') {
             steps {
                 echo 'Running Security Scan...'
-                // Tool: OWASP Dependency-Check
-                // Command: dependency-check.sh
+                // Assuming OWASP Dependency-Check is set up in Jenkins
+                sh 'dependency-check.sh'
             }
         }
         stage('Deploy to Staging') {
             steps {
                 echo 'Deploying to Staging Environment...'
-                // Tool: AWS CLI
-                // Command: aws deploy ...
+                // Assuming AWS CLI or similar tools are set up
+                sh 'aws deploy ...' // Replace with actual deployment command
             }
         }
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Running Integration Tests on Staging...'
-                // Tool: Selenium
-                // Command: selenium-runner ...
+                // Assuming Selenium or a similar tool is available
+                sh 'selenium-runner ...' // Replace with actual testing command
             }
         }
         stage('Deploy to Production') {
             steps {
                 echo 'Deploying to Production...'
-                // Tool: AWS CLI
-                // Command: aws deploy ...
+                // Assuming AWS CLI or similar tools are set up
+                sh 'aws deploy ...' // Replace with actual deployment command
             }
         }
     }
