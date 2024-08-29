@@ -58,8 +58,7 @@ pipeline {
             mail to: 'kadostrayford@gmail.com',
                  subject: "Pipeline: ${currentBuild.fullDisplayName}",
                  body: "Pipeline ${currentBuild.fullDisplayName} finished with status: ${currentBuild.currentResult}\n\n" +
-                       "Please check the Jenkins console output for more details: ${env.BUILD_URL}\n\n" +
-                       "Log: \n" + currentBuild.rawBuild.getLog(50).join("\n")
+                       "Check the Jenkins console output for more details: ${env.BUILD_URL}\n"
         }
     }
 }
