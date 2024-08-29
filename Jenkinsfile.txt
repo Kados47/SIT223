@@ -1,62 +1,64 @@
 pipeline {
     agent any
 
-    environment {
-        DIRECTORY_PATH = 'C:\\Users\\Kadyn Trayford\\OneDrive\\Documents\\Uni\\2024 Semester 2\\SIT223\\5.1P' 
-        TESTING_ENVIRONMENT = 'staging'
-        PRODUCTION_ENVIRONMENT = 'Kadyn-Production' 
-    }
-
     stages {
         stage('Build') {
             steps {
-                script {
-                    echo "Fetching the source code from the directory path specified by the environment variable: ${env.DIRECTORY_PATH}"
-                    echo "Compile the code and generate any necessary artifacts"
-                }
+                echo 'Building the application...'
+                // Tool: Maven
+                // Command: mvn clean package
             }
         }
-        
-        stage('Test') {
+        stage('Unit and Integration Tests') {
             steps {
-                script {
-                    echo "Running unit tests"
-                    echo "Running integration tests"
-                }
+                echo 'Running Unit and Integration Tests...'
+                // Tool: JUnit
+                // Command: mvn test
             }
         }
-        
-        stage('Code Quality Check') {
+        stage('Code Analysis') {
             steps {
-                script {
-                    echo "Checking the quality of the code"
-                }
+                echo 'Performing Code Analysis...'
+                // Tool: SonarQube
+                // Command: mvn sonar:sonar
             }
         }
-        
-        stage('Deploy') {
+        stage('Security Scan') {
             steps {
-                script {
-                    echo "Deploying the application to the testing environment: ${env.TESTING_ENVIRONMENT}"
-                }
+                echo 'Running Security Scan...'
+                // Tool: OWASP Dependency-Check
+                // Command: dependency-check.sh
             }
         }
-        
-        stage('Approval') {
+        stage('Deploy to Staging') {
             steps {
-                script {
-                    echo "Waiting for manual approval..."
-                    sleep(time: 10, unit: 'SECONDS')
-                }
+                echo 'Deploying to Staging Environment...'
+                // Tool: AWS CLI
+                // Command: aws deploy ...
             }
         }
-        
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running Integration Tests on Staging...'
+                // Tool: Selenium
+                // Command: selenium-runner ...
+            }
+        }
         stage('Deploy to Production') {
             steps {
-                script {
-                    echo "Deploying the code to the production environment: ${env.PRODUCTION_ENVIRONMENT}"
-                }
+                echo 'Deploying to Production...'
+                // Tool: AWS CLI
+                // Command: aws deploy ...
             }
+        }
+    }
+
+    post {
+        always {
+            mail to: 'kadostrayford@gmail.com',
+                 subject: "Pipeline: ${currentBuild.fullDisplayName}",
+                 body: "Pipeline ${currentBuild.fullDisplayName} finished with status: ${currentBuild.currentResult}",
+                 attachLog: true
         }
     }
 }
